@@ -134,6 +134,11 @@ func (b *Builder) BuildBundleImage(ctx context.Context, manifest *manifest.Manif
 		return span.Errorf("error parsing the --cache-from flags: %w", err)
 	}
 
+	cacheTo, err := parseCacheOptions(opts.CacheTo)
+	if err != nil {
+		return span.Errorf("error parsing the --cache-to flags: %w", err)
+	}
+
 	buildxOpts := map[string]buildx.Options{
 		"default": {
 			Tags: []string{manifest.Image},
@@ -147,6 +152,7 @@ func (b *Builder) BuildBundleImage(ctx context.Context, manifest *manifest.Manif
 			Session:   currentSession,
 			NoCache:   opts.NoCache,
 			CacheFrom: cacheFrom,
+			CacheTo:   cacheTo,
 		},
 	}
 
