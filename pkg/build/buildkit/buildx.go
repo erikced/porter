@@ -19,7 +19,8 @@ import (
 	buildx "github.com/docker/buildx/build"
 	"github.com/docker/buildx/builder"
 	"github.com/docker/buildx/controller/pb"
-	_ "github.com/docker/buildx/driver/docker" // Register the docker driver with buildkit
+	_ "github.com/docker/buildx/driver/docker"           // Register the docker driver with buildkit
+	_ "github.com/docker/buildx/driver/docker-container" // Register the docker-container driver with buildkit
 	"github.com/docker/buildx/util/buildflags"
 	"github.com/docker/buildx/util/confutil"
 	"github.com/docker/buildx/util/dockerutil"
@@ -79,7 +80,7 @@ func (b *Builder) BuildBundleImage(ctx context.Context, manifest *manifest.Manif
 	}
 
 	bldr, err := builder.New(cli,
-		builder.WithName(cli.CurrentContext()),
+		builder.WithName(opts.Builder),
 		builder.WithContextPathHash(b.Getwd()),
 	)
 	if err != nil {
