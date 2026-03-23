@@ -13,6 +13,7 @@ import (
 	"get.porter.sh/porter/pkg/portercontext"
 	"get.porter.sh/porter/pkg/tracing"
 	"github.com/cnabio/cnab-go/driver/docker"
+	"github.com/cnabio/cnab-to-oci/converter"
 	"github.com/cnabio/cnab-to-oci/relocation"
 	"github.com/cnabio/cnab-to-oci/remotes"
 	containerdRemotes "github.com/containerd/containerd/remotes"
@@ -27,9 +28,24 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/remote/transport"
 	"github.com/moby/term"
 	"github.com/opencontainers/go-digest"
+	ocischemav1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap/zapcore"
 )
+
+// setInvocationImagePlatform sets the platform to linux/amd64 on the
+// invocation image descriptor in the OCI index before it is pushed.
+func setInvocationImagePlatform(ix *ocischemav1.Index) error {
+	for i, m := range ix.Manifests {
+		if m.Annotations[converter.CNABDescriptorTypeAnnotation] == converter.CNABDescriptorTypeInvocation {
+			ix.Manifests[i].Platform = &ocischemav1.Platform{
+				OS:           "linux",
+				Architecture: "amd64",
+			}
+		}
+	}
+	return nil
+}
 
 // ErrNoContentDigest represents an error due to an image not having a
 // corresponding content digest in a bundle definition
@@ -155,7 +171,7 @@ func (r *Registry) PushBundle(ctx context.Context, bundleRef cnab.BundleReferenc
 	}
 	bundleRef.RelocationMap = rm
 
-	d, err := remotes.Push(ctx, &bundleRef.Definition.Bundle, rm, bundleRef.Reference.Named, resolver, true)
+	d, err := remotes.Push(ctx, &bundleRef.Definition.Bundle, rm, bundleRef.Reference.Named, resolver, true, setInvocationImagePlatform)
 	if err != nil {
 		return cnab.BundleReference{}, log.Error(fmt.Errorf("error pushing the bundle to %s: %w", bundleRef.Reference, err))
 	}

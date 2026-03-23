@@ -45,6 +45,7 @@ require (
 	github.com/moby/term v0.5.2
 	github.com/olekukonko/tablewriter v1.1.3
 	github.com/opencontainers/go-digest v1.0.0
+	github.com/opencontainers/image-spec v1.1.1
 	github.com/osteele/liquid v1.7.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.23.2
@@ -184,7 +185,6 @@ require (
 	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
 	github.com/olekukonko/errors v1.1.0 // indirect
 	github.com/olekukonko/ll v0.1.4-0.20260115111900-9e59c2286df0 // indirect
-	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/osteele/tuesday v1.0.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

@@ -30,6 +30,7 @@ import (
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/auth/authprovider"
 	"github.com/moby/buildkit/util/progress/progressui"
+	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -178,6 +179,12 @@ func (b *Builder) BuildBundleImage(ctx context.Context, manifest *manifest.Manif
 			NoCache:   opts.NoCache,
 			CacheFrom: cacheFrom,
 			CacheTo:   cacheTo,
+			Platforms: []ocispecs.Platform{
+				{
+					OS:           "linux",
+					Architecture: "amd64",
+				},
+			},
 		},
 	}
 
